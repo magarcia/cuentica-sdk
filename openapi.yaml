@@ -1,0 +1,2893 @@
+openapi: 3.0.3
+info:
+  title: Cuéntica API
+  version: 1.0.0
+  description: API for controlling and managing accounting and tax for freelancers and small businesses.
+servers:
+  - url: https://api.cuentica.com
+    description: Cuéntica API Server
+components:
+  securitySchemes:
+    X-Auth-Token:
+      type: apiKey
+      in: header
+      name: X-AUTH-TOKEN
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP error code
+        message:
+          type: string
+          description: Error message
+    Company:
+      type: object
+      properties:
+        cif:
+          type: string
+        tradename:
+          type: string
+        business_name:
+          type: string
+        name:
+          type: string
+        surname_1:
+          type: string
+        surname_2:
+          type: string
+        address:
+          type: string
+        postal_code:
+          type: string
+        town:
+          type: string
+        region:
+          type: string
+        country_code:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        web:
+          type: string
+        fax:
+          type: string
+        logo:
+          type: string
+        series:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceSerie" # Reference InvoiceSerie schema
+
+    InvoiceSerie:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the invoice series
+        description:
+          type: string
+          description: Description of the invoice series
+    Account:
+      type: object # Define the structure of account object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the account
+        name:
+          type: string
+          description: Name of the account
+        account_number:
+          type: string
+          description: Account number
+        description:
+          type: string
+          description: Description of the account
+        bank_name:
+          type: string
+          description: Name of the bank
+    BankAccount:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the bank account
+        name:
+          type: string
+          description: Name of the bank account
+        iban:
+          type: string
+          description: IBAN number of the bank account
+        bank_name:
+          type: string
+          description: Name of the bank
+    Provider:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the provider.
+        address:
+          type: string
+          description: Street address.
+        town:
+          type: string
+          description: City.
+        postal_code:
+          type: string
+          description: Postal code.
+        cif:
+          type: string
+          description: Unique tax identification number.
+        tradename:
+          type: string
+          description: Trade name.
+        business_name:
+          type: string
+          description: Business name.
+        name:
+          type: string
+          description: Name of the individual.
+        surname_1:
+          type: string
+          description: First surname of the individual.
+        surname_2:
+          type: string
+          description: Second surname of the individual.
+        business_type:
+          type: string
+          description: Type of business (individual, company, others).
+        region:
+          type: string
+          description: Region if country is Spain.
+        country_code:
+          type: string
+          description: Country code in ISO 3166-1 format, defaults to ES.
+        default_payment_method:
+          type: string
+          description: Default payment method.
+        fax:
+          type: string
+          description: Fax number.
+        phone:
+          type: string
+          description: Phone number.
+        web:
+          type: string
+          description: Web address.
+        email:
+          type: string
+          description: Email address.
+        contact_person:
+          type: string
+          description: Contact person.
+        personal_comment:
+          type: string
+          description: Personal comments.
+        default_retention:
+          type: number
+          description: Default withholding tax.
+        default_expense_type:
+          type: string
+          description: Default expense type.
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the customer.
+        address:
+          type: string
+          description: Street address.
+        town:
+          type: string
+          description: City.
+        postal_code:
+          type: string
+          description: Postal code.
+        cif:
+          type: string
+          description: Unique tax identification number.
+        tradename:
+          type: string
+          description: Trade name.
+        business_name:
+          type: string
+          description: Business name.
+        name:
+          type: string
+          description: Name of the individual.
+        surname_1:
+          type: string
+          description: First surname of the individual.
+        surname_2:
+          type: string
+          description: Second surname of the individual.
+        business_type:
+          type: string
+          description: Type of business (individual, company, others).
+        region:
+          type: string
+          description: Region if country is Spain.
+        country_code:
+          type: string
+          description: Country code in ISO 3166-1 format, defaults to ES.
+        default_payment_method:
+          type: string
+          description: Default payment method.
+        fax:
+          type: string
+          description: Fax number.
+        phone:
+          type: string
+          description: Phone number.
+        web:
+          type: string
+          description: Web address.
+        email:
+          type: string
+          description: Email address.
+        contact_person:
+          type: string
+          description: Contact person.
+        personal_comment:
+          type: string
+          description: Personal comments.
+        default_invoice_language:
+          type: string
+          description: Default language of invoice for this customer
+        has_surcharge:
+          type: boolean
+          description: Determines if the invoices for this customer have surcharges by default.
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the invoice
+        description:
+          type: string
+          description: Invoice description
+        annotations:
+          type: string
+          description: Invoice annotations
+        date:
+          type: string
+          format: date
+          description: Invoice date
+        serie:
+          type: string
+          description: Invoice serie
+        tags:
+          type: array
+          items:
+            type: string
+          description: Invoice tags
+        issued:
+          type: boolean
+          description: Defines if it's a draft or a issued invoice
+        number:
+          type: integer
+          description: Invoice number
+        customer:
+          type: integer
+          description: Customer ID
+        footer:
+          type: string
+          description: Default invoice footer from the user configuration
+        irm:
+          type: string
+          description: Default IRM field for invoices from the user configuration
+        invoice_lines:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceLine"
+        charges:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceCharge"
+    InvoiceLine:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the invoice line
+        quantity:
+          type: number
+        concept:
+          type: string
+        amount:
+          type: number
+        discount:
+          type: number
+        tax:
+          type: number
+        surcharge:
+          type: number
+        retention:
+          type: number
+    InvoiceCharge:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the charge
+        date:
+          type: string
+          format: date
+          description: Date of the charge
+        amount:
+          type: number
+        method:
+          type: string
+          description: Payment method
+          enum: [cash, receipt, wire_transfer, card, promissory_note, other]
+        destination_account:
+          type: integer
+          description: ID of the user's account where the payment will be received.
+        origin_account:
+          type: string
+          description: Customer's account number from which payment was made
+        charged:
+          type: boolean
+          description: Determines if the payment was completed
+    Income:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the income
+        customer:
+          type: integer
+          description: ID of the customer
+        date:
+          type: string
+          format: date
+          description: Date of the income
+        tags:
+          type: array
+          items:
+            type: string
+          description: Income tags
+        document_type:
+          type: string
+          description: Type of document
+          enum:
+            [
+              other_invoice,
+              cash_statement,
+              interest_settlement,
+              bank_doc,
+              contract,
+              resolution,
+              other_doc,
+            ]
+        document_number:
+          type: string
+          description: Document number
+        annotations:
+          type: string
+          description: Personal comments about the income
+        income_lines:
+          type: array
+          items:
+            $ref: "#/components/schemas/IncomeLine"
+        charges:
+          type: array
+          items:
+            $ref: "#/components/schemas/IncomeCharge"
+        attachment:
+          type: object
+          description: Document attachment
+    IncomeLine:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the income line
+        concept:
+          type: string
+        amount:
+          type: number
+        tax:
+          type: number
+        retention:
+          type: number
+        imputation:
+          type: number
+        income_type:
+          type: string
+          description: Type of the income
+    IncomeCharge:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the charge
+        date:
+          type: string
+          format: date
+          description: Date of the charge
+        amount:
+          type: number
+        method:
+          type: string
+          description: Payment method
+          enum: [cash, receipt, wire_transfer, card, promissory_note, other]
+        destination_account:
+          type: integer
+          description: ID of the user's account where the payment will be received.
+        origin_account:
+          type: string
+          description: Customer's account number from which payment was made
+        charged:
+          type: boolean
+          description: Determines if the payment was completed
+    Expense:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the expense
+        date:
+          type: string
+          format: date
+          description: Date of the expense
+        draft:
+          type: boolean
+          description: Defines if it's a draft or a confirmed expense
+        provider:
+          type: integer
+          description: ID of the provider
+        document_type:
+          type: string
+          description: Type of document
+          enum: [invoice, ticket]
+        document_number:
+          type: string
+          description: Document number
+        tags:
+          type: array
+          items:
+            type: string
+          description: Expense tags
+        annotations:
+          type: string
+          description: Personal comments about the expense
+        expense_lines:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExpenseLine"
+        payments:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExpensePayment"
+        attachment:
+          type: object
+          description: Document attachment
+    ExpenseLine:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the expense line
+        description:
+          type: string
+        base:
+          type: number
+        tax:
+          type: number
+        surcharge:
+          type: number
+        retention:
+          type: number
+        imputation:
+          type: number
+        expense_type:
+          type: string
+        investment:
+          type: boolean
+        investment_data:
+          type: object
+          $ref: "#/components/schemas/InvestmentData"
+    ExpensePayment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the payment
+        date:
+          type: string
+          format: date
+          description: Date of the payment
+        amount:
+          type: number
+        payment_method:
+          type: string
+          description: Payment method
+          enum: [cash, receipt, wire_transfer, card, promissory_note, other]
+        paid:
+          type: boolean
+          description: Determines if the payment was completed
+        origin_account:
+          type: integer
+          description: ID of the user's account from which the payment will be made
+        destination_account:
+          type: string
+          description: Supplier's account number to which payment was made
+    InvestmentData:
+      type: object
+      properties:
+        investment_type:
+          type: string
+        value:
+          type: number
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        duration:
+          type: integer
+        used:
+          type: boolean
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the document
+        date:
+          type: string
+          format: date
+          description: Date of the document
+        expense_id:
+          type: integer
+          description: ID of the expense associated to the document
+        attachment:
+          type: object
+          description: Document attachment
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the tag
+        name:
+          type: string
+          description: Tag name
+    Transfer:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the transfer
+        amount:
+          type: number
+        payment_method:
+          type: string
+          enum: [cash, wire_transfer, promissory_note]
+        date:
+          type: string
+          format: date
+          description: Date of the transfer
+        concept:
+          type: string
+        destination_account:
+          type: integer
+          description: ID of the destination account
+        origin_account:
+          type: integer
+          description: ID of the origin account
+    Attachment:
+      type: object
+      properties:
+        filename:
+          type: string
+          description: File name for the attachment
+        data:
+          type: string
+          description: File encoded in Base64 format
+
+paths:
+  /company:
+    get:
+      summary: Get company data.
+      security:
+        - X-Auth-Token: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /company/serie:
+    get:
+      summary: Get company's invoice series
+      security:
+        - X-Auth-Token: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InvoiceSerie"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /account:
+    get:
+      summary: Get a list of the company's accounts
+      security:
+        - X-Auth-Token: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BankAccount" # Reference a bank account schema
+  /account/{id}:
+    get:
+      summary: Get a specific company's account
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the account to retrieve
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /provider:
+    get:
+      summary: Get a list of providers.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Number of items per page.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number.
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: Search query for trade name, address, CIF, phone, and email
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Provider"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Add a new provider.
+      security:
+        - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Provider"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Provider"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /provider/{id}:
+    get:
+      summary: Get a specific provider.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the provider to retrieve.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Provider"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a provider.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the provider to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Provider"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Provider"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a provider.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the provider to delete.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /customer:
+    get:
+      summary: Get a list of customers.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Number of items per page.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number.
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: Search query for trade name, address, CIF, phone, and email
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Customer"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Add a new customer.
+      security:
+        - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /customer/{id}:
+    get:
+      summary: Get a specific customer.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the customer to retrieve.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a customer.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the customer to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a customer.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the customer to delete.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /invoice:
+    get:
+      summary: Get a list of invoices.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Number of items per page.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number.
+        - in: query
+          name: customer
+          schema:
+            type: integer
+          description: ID of the customer to filter by
+        - in: query
+          name: min_total_limit
+          schema:
+            type: number
+          description: Minimum invoice total
+        - in: query
+          name: max_total_limit
+          schema:
+            type: number
+          description: Maximum invoice total
+        - in: query
+          name: initial_date
+          schema:
+            type: string
+            format: date
+          description: Initial date to filter by
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+          description: End date to filter by
+        - in: query
+          name: serie
+          schema:
+            type: string
+          description: Invoice series
+        - in: query
+          name: description
+          schema:
+            type: string
+          description: Text to search within the invoice description
+        - in: query
+          name: issued
+          schema:
+            type: boolean
+          description: True to show issued invoices, false to show draft invoices.
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: "Comma separated list of sorting criteria, using the format 'key:order'. Accepted keys: customer, description, total_base, total_invoice, number, date. Accepted orders: asc, desc."
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: Comma separated list of tags to filter by.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Invoice"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Add a new invoice.
+      security:
+        - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Invoice"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /invoice/{id}:
+    get:
+      summary: Get a specific invoice.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the invoice to retrieve.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update an invoice.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the invoice to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Invoice"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete an invoice.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the invoice to delete.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /invoice/{id}/public:
+    get:
+      summary: Get the public link for an invoice.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the invoice to get public link.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /invoice/{id}/charges:
+    put:
+      summary: Update the charges of an invoice.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the invoice to update charges.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                charges:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/InvoiceCharge"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /invoice/{id}/email:
+    post:
+      summary: Send an email with an invoice.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the invoice to send by email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: array
+                  items:
+                    type: string
+                  description: Email addresses of the recipients.
+                reply_to:
+                  type: string
+                  description: Reply-to email address.
+                subject:
+                  type: string
+                  description: Subject of the email.
+                body:
+                  type: string
+                  description: Body of the email.
+                cc:
+                  type: array
+                  items:
+                    type: string
+                  description: Email addresses to send in cc.
+                cc_me:
+                  type: boolean
+                  description: Send a copy of the email to the user.
+                show_card_payment:
+                  type: boolean
+                  description: Shows a payment button in the email.
+                include_pdf:
+                  type: boolean
+                  description: Include PDF of the invoice.
+                attachments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      filename:
+                        type: string
+                        description: Filename of the attachment
+                      data:
+                        type: string
+                        description: Attachment in Base64
+                  description: Attachments for the email
+      responses:
+        "200":
+          description: Successful response
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /invoice/{id}/pdf:
+    get:
+      summary: Download the PDF file of an invoice.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the invoice to get the PDF.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /income:
+    get:
+      summary: Get a list of incomes.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Number of items per page.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number.
+        - in: query
+          name: customer
+          schema:
+            type: integer
+          description: ID of the customer to filter by
+        - in: query
+          name: min_total_limit
+          schema:
+            type: number
+          description: Minimum income total
+        - in: query
+          name: max_total_limit
+          schema:
+            type: number
+          description: Maximum income total
+        - in: query
+          name: initial_date
+          schema:
+            type: string
+            format: date
+          description: Initial date to filter by
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+          description: End date to filter by
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: "Comma separated list of sorting criteria, using the format 'key:order'. Accepted keys: customer, document_number, total_base, total_income, date. Accepted orders: asc, desc."
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: Comma separated list of tags to filter by.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Income"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Add a new income.
+      security:
+        - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Income"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Income"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /income/{id}:
+    get:
+      summary: Get a specific income.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the income to retrieve.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Income"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update an income.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the income to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Income"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Income"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete an income.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the income to delete.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /income/{id}/attachment:
+    get:
+      summary: Get the attachment of an income.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the income to get the attachment.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update the attachment of an income.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the income to update attachment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Attachment"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete the attachment of an income.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the income to delete the attachment.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /income/{id}/charges:
+    put:
+      summary: Update the charges of an income.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the income to update charges.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                charges:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/IncomeCharge"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Income"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /expense:
+    get:
+      summary: Get a list of expenses.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Number of items per page.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number.
+        - in: query
+          name: provider
+          schema:
+            type: integer
+          description: ID of the provider to filter by
+        - in: query
+          name: min_total_limit
+          schema:
+            type: number
+          description: Minimum expense total
+        - in: query
+          name: max_total_limit
+          schema:
+            type: number
+          description: Maximum expense total
+        - in: query
+          name: initial_date
+          schema:
+            type: string
+            format: date
+          description: Initial date to filter by
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+          description: End date to filter by
+        - in: query
+          name: expense_type
+          schema:
+            type: string
+          description: Type of expense to filter by
+        - in: query
+          name: investment_type
+          schema:
+            type: string
+          description: Type of investment to filter by
+        - in: query
+          name: draft
+          schema:
+            type: boolean
+          description: True to show drafts, false to show confirmed expenses
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: "Comma separated list of sorting criteria, using the format 'key:order'. Accepted keys: provider, document_number, total_base, total_expense, date. Accepted orders: asc, desc."
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: Comma separated list of tags to filter by.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Expense"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Add a new expense.
+      security:
+        - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Expense"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /expense/{id}:
+    get:
+      summary: Get a specific expense.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the expense to retrieve.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update an expense.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the expense to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Expense"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete an expense.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the expense to delete.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /expense/{id}/attachment:
+    get:
+      summary: Get the attachment of an expense.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the expense to get the attachment.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update the attachment of an expense.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the expense to update attachment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Attachment"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete the attachment of an expense.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the expense to delete the attachment.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /expense/{id}/payments:
+    put:
+      summary: Update the payments of an expense.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the expense to update payments.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payments:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ExpensePayment"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /document:
+    get:
+      summary: Get a list of documents.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Number of items per page.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number.
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: Sorting criteria, format key:order.
+        - in: query
+          name: initial_date
+          schema:
+            type: string
+            format: date
+          description: Initial date to filter by.
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+          description: End date to filter by.
+        - in: query
+          name: keyword
+          schema:
+            type: string
+          description: Keyword to search in document name or subject
+        - in: query
+          name: assigned
+          schema:
+            type: boolean
+          description: True to get processed documents, false to get pending
+        - in: query
+          name: extension
+          schema:
+            type: string
+          description: Comma separated list of document extensions to filter by. Prefix with ! to exclude extensions.
+        - in: query
+          name: hash
+          schema:
+            type: string
+          description: Hash of the file in MD5 algorithm.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Add a new document.
+      security:
+        - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  $ref: "#/components/schemas/Attachment"
+                date:
+                  type: string
+                  format: date
+                  description: Date of the document
+                expense_id:
+                  type: integer
+                  description: ID of the expense associated to the document
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /document/{id}:
+    get:
+      summary: Get a specific document.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the document to retrieve.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a document.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the document to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  $ref: "#/components/schemas/Attachment"
+                date:
+                  type: string
+                  format: date
+                  description: Date of the document
+                expense_id:
+                  type: integer
+                  description: ID of the expense associated to the document
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a document.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the document to delete.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /document/{id}/attachment:
+    get:
+      summary: Get the attachment of a document.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the document to get the attachment.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /tag:
+    get:
+      summary: Get a list of tags.
+      security:
+        - X-Auth-Token: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /transfer:
+    get:
+      summary: Get a list of transfers.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: query
+          name: origin_account
+          schema:
+            type: integer
+          description: ID of the origin account to filter by.
+        - in: query
+          name: destination_account
+          schema:
+            type: integer
+          description: ID of the destination account to filter by.
+        - in: query
+          name: payment_method
+          schema:
+            type: string
+            enum: [cash, wire_transfer, promissory_note]
+          description: Payment method to filter by.
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [asc, desc]
+          description: Sorting order (asc or desc).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Number of items per page.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number.
+        - in: query
+          name: min_total_limit
+          schema:
+            type: number
+          description: Minimum transfer total
+        - in: query
+          name: max_total_limit
+          schema:
+            type: number
+          description: Maximum transfer total
+        - in: query
+          name: initial_date
+          schema:
+            type: string
+            format: date
+          description: Initial date to filter by.
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+          description: End date to filter by.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transfer"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a new transfer.
+      security:
+        - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Transfer"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /transfer/{id}:
+    get:
+      summary: Get a specific transfer.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the transfer to retrieve.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a transfer.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the transfer to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Transfer"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a transfer.
+      security:
+        - X-Auth-Token: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the transfer to delete.
+      responses:
+        "200":
+          description: Successful response
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
