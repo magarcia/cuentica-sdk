@@ -1,4 +1,4 @@
-import { CuenticaAPI, type Invoice } from "cuentica-sdk";
+import { CuenticaAPI, type Invoice } from "cuentica";
 
 async function generateMonthlyIncomeReport(api: CuenticaAPI, month: string) {
   // Get current and previous month dates

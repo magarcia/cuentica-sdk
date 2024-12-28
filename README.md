@@ -36,13 +36,13 @@ A TypeScript SDK for the [Cuéntica](https://cuentica.com/) API, providing easy 
 ## Installation
 
 ```bash
-npm install cuentica-sdk
+npm install cuentica
 ```
 
 ## Quick Start
 
 ```typescript
-import { CuenticaAPI } from "cuentica-sdk";
+import { CuenticaAPI } from "cuentica";
 
 // Initialize the client using token directly
 const api = new CuenticaAPI("your-api-token");
@@ -274,7 +274,7 @@ import type {
   Customer,
   ListInvoicesParams,
   RateLimitError,
-} from "cuentica-sdk";
+} from "cuentica";
 
 // Parameters are fully typed
 const params: ListInvoicesParams = {

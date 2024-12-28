@@ -1,4 +1,4 @@
-import { CuenticaAPI, RateLimitError } from "cuentica-sdk";
+import { CuenticaAPI, RateLimitError } from "cuentica";
 
 // Initialize the client
 const api = new CuenticaAPI(process.env.CUENTICA_TOKEN);
