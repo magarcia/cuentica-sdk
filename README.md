@@ -21,6 +21,7 @@ A TypeScript SDK for the [Cuéntica](https://cuentica.com/) API, providing easy 
   - [Rate Limiting](#rate-limiting)
 - [TypeScript Support](#typescript-support)
 - [Contributing](#contributing)
+- [Disclaimer](#disclaimer)
 - [License](#license)
 
 ## Features
@@ -293,6 +294,10 @@ Contributions are welcome! Please feel free to submit a Pull Request. When contr
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## Disclaimer
+
+This is an independent, community-driven project and is not officially associated with or endorsed by Cuéntica. While the SDK aims to provide a reliable interface to Cuéntica's API, users should refer to the official [Cuéntica API documentation](https://apidocs.cuentica.com/) for the most up-to-date API specifications.
 
 ## License
 
