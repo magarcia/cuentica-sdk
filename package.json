@@ -1,5 +1,5 @@
 {
-  "name": "cuentica-sdk",
+  "name": "cuentica",
   "version": "1.0.0",
   "description": "TypeScript SDK for Cuéntica API",
   "main": "dist/index.js",
